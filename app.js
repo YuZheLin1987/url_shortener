@@ -1,6 +1,7 @@
 // 載入
 const express = require('express')
 const app = express()
+const exphbs = require('express-handlebars')
 const mongoose = require('mongoose')
 
 if(process.env.NODE_ENV !== 'production') {
@@ -21,9 +22,13 @@ db.once('open', () => {
   console.log('mongodb connected!')
 })
 
+// 設定樣版引擎
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
+app.set('view engine', 'handlebars')
+
 // 設定路由
 app.get('/', (req, res) => {
-  res.send('test')
+  res.render('index')
 })
 
 // 監聽伺服器
