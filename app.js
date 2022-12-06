@@ -28,9 +28,15 @@ app.set('view engine', 'handlebars')
 
 // 設定路由
 app.use(express.static('public'))
+app.use(express.urlencoded({ extends: true }))
 
 app.get('/', (req, res) => {
   res.render('index')
+})
+
+app.post('/shorten', (req, res) => {
+  const inputURL = req.body.inputURL
+  res.render('shorten', { inputURL })
 })
 
 // 監聽伺服器
