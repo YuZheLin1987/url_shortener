@@ -64,7 +64,12 @@ app.get('/:shortenLetters', (req, res) => {
   Record.findOne({ "shorten": `${shortenLetters}` })
     .lean()
     .then(record => {
-      res.redirect(record.original)
+      if(!record) {
+        res.render('fail')
+      } else {
+        res.redirect(record.original)
+      }
+
     })
     .catch(error => console.log(error))
 })
