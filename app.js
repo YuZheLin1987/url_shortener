@@ -59,6 +59,16 @@ app.post('/shorten', (req, res) => {
 
 })
 
+app.get('/:shortenLetters', (req, res) => {
+  const shortenLetters = req.params.shortenLetters
+  Record.findOne({ "shorten": `${shortenLetters}` })
+    .lean()
+    .then(record => {
+      res.redirect(record.original)
+    })
+    .catch(error => console.log(error))
+})
+
 // 監聽伺服器
 app.listen(port, () => {
   console.log(`This express server is listening at http://localhost:${port}`)
