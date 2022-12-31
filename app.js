@@ -2,6 +2,8 @@
 const express = require('express')
 const app = express()
 const exphbs = require('express-handlebars')
+const randomLetterGenerator = require('./random_letter_generator')
+const Record = require('./models/record')
 const mongoose = require('mongoose')
 
 if(process.env.NODE_ENV !== 'production') {
@@ -28,7 +30,7 @@ app.set('view engine', 'handlebars')
 
 // 設定路由
 app.use(express.static('public'))
-app.use(express.urlencoded({ extends: true }))
+app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
   res.render('index')
@@ -36,7 +38,25 @@ app.get('/', (req, res) => {
 
 app.post('/shorten', (req, res) => {
   const inputURL = req.body.inputURL
-  res.render('shorten', { inputURL })
+
+  Record.findOne({ "original": `${inputURL}` })
+    .lean()
+    .then(record => {
+      if(!record) {
+        const shortenLetters = randomLetterGenerator()
+        const shortenURL = `http://localhost:3000/${shortenLetters}`
+        Record.create({
+          original: `${inputURL}`,
+          shorten: `${shortenLetters}`
+        })
+        res.render('shorten', { shortenURL })
+      } else {
+        const shortenURL = `http://localhost:3000/${record.shorten}`
+        res.render('shorten', { shortenURL })
+      }
+    })
+    .catch(error => console.log(error))
+
 })
 
 // 監聽伺服器
