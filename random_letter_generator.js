@@ -4,9 +4,11 @@ function randomLetterGenerator() {
   const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
   let shortener = ''
 
-  for (let i = 0; i < 5; i++) {
-    shortener += pickIndex(letters)
-  }
+  do {
+    for (let i = 0; i < 5; i++) {
+      shortener += pickIndex(letters)
+    }
+  } while (generatedStringRecord.indexOf(shortener) >= 0)
 
   generatedStringRecord.push(shortener)
   
