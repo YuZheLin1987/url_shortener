@@ -36,12 +36,15 @@ app.get('/', (req, res) => {
   res.render('index')
 })
 
+// 縮網址
 app.post('/shorten', (req, res) => {
   const inputURL = req.body.inputURL
 
+  // 針對輸入的網址先查詢是否有縮過網址了
   Record.findOne({ "original": `${inputURL}` })
     .lean()
     .then(record => {
+      // 如果沒有就會記錄下來並產生一組新的短網址代碼
       if(!record) {
         const shortenLetters = randomLetterGenerator()
         const shortenURL = `http://localhost:3000/${shortenLetters}`
@@ -51,6 +54,7 @@ app.post('/shorten', (req, res) => {
         })
         res.render('shorten', { shortenURL })
       } else {
+        // 如果已經有紀錄，則提供資料庫中紀錄的短網址
         const shortenURL = `http://localhost:3000/${record.shorten}`
         res.render('shorten', { shortenURL })
       }
@@ -59,11 +63,13 @@ app.post('/shorten', (req, res) => {
 
 })
 
+// 導向原始網頁
 app.get('/:shortenLetters', (req, res) => {
   const shortenLetters = req.params.shortenLetters
   Record.findOne({ "shorten": `${shortenLetters}` })
     .lean()
     .then(record => {
+      // 如果提供錯誤的短網址，進入失敗的畫面
       if(!record) {
         res.render('fail')
       } else {
